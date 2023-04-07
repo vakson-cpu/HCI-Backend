@@ -38,7 +38,7 @@ const Register = async (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     console.log(errors.array());
-    var error = new HttpError("Validation Failed ", 422, false);
+    var error = new HttpError(("Validation Failed "+errors.array()), 422, false);
     return next(error);
   }
   let existingUser;
