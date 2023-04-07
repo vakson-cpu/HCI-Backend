@@ -17,6 +17,6 @@ app.get("/nesto",(req,res)=>res.json("rutica"));
 app.use("/",(req,res,next)=>res.json("Failed route"))
 
 app.use(ErrorHandling);
-ConnectToDatabase(app,PORT);
-()=>SeedingRoles;
+// ConnectToDatabase(app,PORT);
+// ()=>SeedingRoles;
 
