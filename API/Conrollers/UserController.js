@@ -33,9 +33,11 @@ const getUserbyId = async (req, res, next) => {
 };
 
 const Register = async (req, res, next) => {
+  console.log("Doso je ");
   const { name, email, age, password } = req.body;
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
+    console.log(errors.array());
     var error = new HttpError("Validation Failed ", 422, false);
     return next(error);
   }
@@ -103,6 +105,7 @@ const Register = async (req, res, next) => {
 const LogIn = async (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
+    
     var error = new HttpError("Validation Failed ", 422, false);
     return next(error);
   }
