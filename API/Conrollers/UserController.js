@@ -146,7 +146,7 @@ const LogIn = async (req, res, next) => {
       {
         userId: existingUser.id,
         email: existingUser.email,
-        role: existingUser.role,
+        role: existingUser.role.name,
       },
       "tajni_string",
       { expiresIn: "1h" }
