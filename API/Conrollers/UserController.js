@@ -33,7 +33,6 @@ const getUserbyId = async (req, res, next) => {
 };
 
 const Register = async (req, res, next) => {
-  console.log("Doso je ");
   const { name, email, age, password } = req.body;
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
@@ -113,14 +112,10 @@ const LogIn = async (req, res, next) => {
     return next(error);
   }
   const { email, password } = req.body;
-  console.log("Email : ", email, "Password ", password);
   let existingUser;
-  console.log(existingUser);
-
   try {
     existingUser = await Users.findOne({ email: email });
   } catch (err) {
-    console.log("nije ga naso.");
     const error = new HttpError("Could not find the user", 500, false);
     return next(error);
   }
@@ -134,7 +129,6 @@ const LogIn = async (req, res, next) => {
     next(error);
   }
   let isValidPassword = false;
-  console.log("TUde puca");
   try {
     isValidPassword = await bycrypt.compare(password, existingUser.password);
   } catch (err) {
