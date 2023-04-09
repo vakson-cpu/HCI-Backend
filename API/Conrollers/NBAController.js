@@ -44,9 +44,10 @@ const getLive = async (req, res, next) => {
 };
 
 const getLeaderBoardOfConference = async (req, res, next) => {
+  let {conference} = req.query;
   let result = await axios
     .get(`https://api-nba-v1.p.rapidapi.com/standings`, {
-      params: { league: "standard", season: "2022", conference: "east" },
+      params: { league: "standard", season: "2022", conference: conference },
       headers: {
         "X-RapidAPI-Key": "3be10b1358msh51fd936d1571daep1230ccjsn529137f75def",
         "X-RapidAPI-Host": "api-nba-v1.p.rapidapi.com",
