@@ -114,7 +114,7 @@ const LogIn = async (req, res, next) => {
   const { email, password } = req.body;
   let existingUser;
   try {
-    existingUser = await Users.findOne({ email: email });
+    existingUser = await Users.findOne({ email: email }).populate('role');
   } catch (err) {
     const error = new HttpError("Could not find the user", 500, false);
     return next(error);
