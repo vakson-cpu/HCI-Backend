@@ -38,7 +38,11 @@ const Register = async (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     console.log(errors.array());
-    var error = new HttpError(("Validation Failed "+errors.array()), 422, false);
+    var error = new HttpError(
+      "Validation Failed " + errors.array(),
+      422,
+      false
+    );
     return next(error);
   }
   let existingUser;
@@ -65,7 +69,7 @@ const Register = async (req, res, next) => {
   });
   try {
     let role = await Roles.findOne({ name: RoleEnums.USER });
-    newUser.role=role;
+    newUser.role = role;
   } catch (err) {
     const error = new HttpError("Error while Fetching role", 500, false);
     return next(error);
@@ -105,15 +109,18 @@ const Register = async (req, res, next) => {
 const LogIn = async (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    
     var error = new HttpError("Validation Failed ", 422, false);
     return next(error);
   }
   const { email, password } = req.body;
+  console.log("Email : ", email, "Password ", password);
   let existingUser;
+  console.log(existingUser);
+
   try {
     existingUser = await Users.findOne({ email: email });
   } catch (err) {
+    console.log("nije ga naso.");
     const error = new HttpError("Could not find the user", 500, false);
     return next(error);
   }
@@ -127,6 +134,7 @@ const LogIn = async (req, res, next) => {
     next(error);
   }
   let isValidPassword = false;
+  console.log("TUde puca");
   try {
     isValidPassword = await bycrypt.compare(password, existingUser.password);
   } catch (err) {
@@ -141,7 +149,11 @@ const LogIn = async (req, res, next) => {
   let token;
   try {
     token = jwt.sign(
-      { userId: existingUser.id, email: existingUser.email,role:existingUser.role },
+      {
+        userId: existingUser.id,
+        email: existingUser.email,
+        role: existingUser.role,
+      },
       "tajni_string",
       { expiresIn: "1h" }
     );
@@ -154,7 +166,7 @@ const LogIn = async (req, res, next) => {
       userId: existingUser.id,
       email: existingUser.email,
       token: token,
-      role:existingUser.role
+      role: existingUser.role,
     },
     "Successfully Logged In ",
     true
