@@ -8,5 +8,5 @@ router.get("/Seasons",NBAController.getSeasons);
 router.get("/Standings/TeamId",NBAController.getStandingsByTeamId);
 router.get("/LeaderBoard",NBAController.getLeaderBoardOfConference);
 router.get("/Teams/Name",NBAController.getTeamByName);
-
+router.get("/Games/Season",NBAController.getGamesByTeamAndSeason);
 module.exports=router;

@@ -105,9 +105,26 @@ const getTeamByName = async (req, res, next) => {
   return res.status(200).json(result);
 };
 
+const getGamesByTeamAndSeason =async(req,res,next)=>{
+    const {season,teamId}=req.query;
+    let result = await axios
+      .get(`https://api-nba-v1.p.rapidapi.com/games`, {
+        params: { season:season,team:teamId },
+        headers: {
+          "X-RapidAPI-Key": "3be10b1358msh51fd936d1571daep1230ccjsn529137f75def",
+          "X-RapidAPI-Host": "api-nba-v1.p.rapidapi.com",
+        },
+      })
+      .then((res) => res.data.response)
+      .catch((err) => next(new HttpError(err, 500, false)));
+    
+    return res.status(200).json(result);
+
+}
 exports.getGames = getGames;
 exports.getSeasons = getSeasons;
 exports.getLive = getLive;
 exports.getStandingsByTeamId = getStandingsByTeamId;
 exports.getTeamByName = getTeamByName;
 exports.getLeaderBoardOfConference = getLeaderBoardOfConference;
+exports.getGamesByTeamAndSeason=getGamesByTeamAndSeason;
