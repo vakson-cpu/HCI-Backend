@@ -125,6 +125,6 @@ exports.getGames = getGames;
 exports.getSeasons = getSeasons;
 exports.getLive = getLive;
 exports.getStandingsByTeamId = getStandingsByTeamId;
-exports.getTeamByName = getTeamByName;
+exports.getTeamById = getTeamById;
 exports.getLeaderBoardOfConference = getLeaderBoardOfConference;
 exports.getGamesByTeamAndSeason=getGamesByTeamAndSeason;
