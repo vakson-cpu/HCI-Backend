@@ -89,11 +89,11 @@ const getStandingsByTeamId = async (req, res, next) => {
   });
   return Response.SendToClient(res, 200);
 };
-const getTeamByName = async (req, res, next) => {
-  const { teamName } = req.body;
+const getTeamById = async (req, res, next) => {
+  const { id } = req.query;
   let result = await axios
     .get(`https://api-nba-v1.p.rapidapi.com/teams`, {
-      params: { name: `${teamName}` },
+      params: { id: `${id}` },
       headers: {
         "X-RapidAPI-Key": "3be10b1358msh51fd936d1571daep1230ccjsn529137f75def",
         "X-RapidAPI-Host": "api-nba-v1.p.rapidapi.com",
