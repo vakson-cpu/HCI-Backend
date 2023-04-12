@@ -99,7 +99,7 @@ const getTeamById = async (req, res, next) => {
         "X-RapidAPI-Host": "api-nba-v1.p.rapidapi.com",
       },
     })
-    .then((res) => res.data)
+    .then((res) => res.data.response)
     .catch((err) => err);
 
   return res.status(200).json(result);
