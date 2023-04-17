@@ -1,6 +1,7 @@
 const axios = require("axios");
 const CustomResponse = require("../utils/CustomResponse");
 const HttpError = require("../utils/HttpError");
+const ColorThief = require("color-thief-node");
 
 const getGames = async (req, res, next) => {
   let result = await axios
@@ -101,8 +102,11 @@ const getTeamById = async (req, res, next) => {
     })
     .then((res) => res.data.response)
     .catch((err) => err);
+    console.log(result[0].logo)
+    // const colorThief = new ColorThief();
+    const color = await ColorThief.getColorFromURL(result[0].logo); //Ovde kupi sa linka
 
-  return res.status(200).json(result);
+  return res.status(200).json({team:result,color:color});
 };
 
 const getGamesByTeamAndSeason =async(req,res,next)=>{
