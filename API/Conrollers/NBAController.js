@@ -1,7 +1,7 @@
 const axios = require("axios");
 const CustomResponse = require("../utils/CustomResponse");
 const HttpError = require("../utils/HttpError");
-// const ColorThief = require("color-thief-node");
+const ColorThief = require("colorthief");
 // "color-thief-node": "^1.0.4"
 const getGames = async (req, res, next) => {
   let result = await axios
@@ -45,7 +45,7 @@ const getLive = async (req, res, next) => {
 };
 
 const getLeaderBoardOfConference = async (req, res, next) => {
-  let {conference} = req.query;
+  let { conference } = req.query;
   let result = await axios
     .get(`https://api-nba-v1.p.rapidapi.com/standings`, {
       params: { league: "standard", season: "2022", conference: conference },
@@ -62,7 +62,6 @@ const getLeaderBoardOfConference = async (req, res, next) => {
   });
 
   sortedResult = sortedResult.reverse();
-
   let Response = new CustomResponse(
     { Leaderboard: sortedResult },
     "Succeeded",
@@ -102,33 +101,32 @@ const getTeamById = async (req, res, next) => {
     })
     .then((res) => res.data.response)
     .catch((err) => err);
-    // console.log(result[0].logo)
-    // const colorThief = new ColorThief();
-    // const color = await ColorThief.getColorFromURL(result[0].logo); //Ovde kupi sa linka
+  // const colorThief = new ColorThief();
+
+  const color = await ColorThief.getColor(result[0].logo); //Ovde kupi sa linka
+  console.log(color);
+  return res.status(200).json({team:result,color:color});
+};
+
+const getGamesByTeamAndSeason = async (req, res, next) => {
+  const { season, teamId } = req.query;
+  let result = await axios
+    .get(`https://api-nba-v1.p.rapidapi.com/games`, {
+      params: { season: season, team: teamId },
+      headers: {
+        "X-RapidAPI-Key": "3be10b1358msh51fd936d1571daep1230ccjsn529137f75def",
+        "X-RapidAPI-Host": "api-nba-v1.p.rapidapi.com",
+      },
+    })
+    .then((res) => res.data.response)
+    .catch((err) => next(new HttpError(err, 500, false)));
 
   return res.status(200).json(result);
 };
-
-const getGamesByTeamAndSeason =async(req,res,next)=>{
-    const {season,teamId}=req.query;
-    let result = await axios
-      .get(`https://api-nba-v1.p.rapidapi.com/games`, {
-        params: { season:season,team:teamId },
-        headers: {
-          "X-RapidAPI-Key": "3be10b1358msh51fd936d1571daep1230ccjsn529137f75def",
-          "X-RapidAPI-Host": "api-nba-v1.p.rapidapi.com",
-        },
-      })
-      .then((res) => res.data.response)
-      .catch((err) => next(new HttpError(err, 500, false)));
-    
-    return res.status(200).json(result);
-
-}
 exports.getGames = getGames;
 exports.getSeasons = getSeasons;
 exports.getLive = getLive;
 exports.getStandingsByTeamId = getStandingsByTeamId;
 exports.getTeamById = getTeamById;
 exports.getLeaderBoardOfConference = getLeaderBoardOfConference;
-exports.getGamesByTeamAndSeason=getGamesByTeamAndSeason;
+exports.getGamesByTeamAndSeason = getGamesByTeamAndSeason;
