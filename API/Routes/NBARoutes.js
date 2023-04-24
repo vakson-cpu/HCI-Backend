@@ -9,4 +9,6 @@ router.get("/Standings/TeamId",NBAController.getStandingsByTeamId);
 router.get("/LeaderBoard",NBAController.getLeaderBoardOfConference);
 router.get("/Teams/Name",NBAController.getTeamById);
 router.get("/Games/Season",NBAController.getGamesByTeamAndSeason);
+router.get("/Game/Stats",NBAController.getGameDetails);
+router.get("/Games/Player/Stats",NBAController.getPlayerStatistics);
 module.exports=router;
