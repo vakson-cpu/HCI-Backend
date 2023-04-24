@@ -161,4 +161,4 @@ exports.getTeamById = getTeamById;
 exports.getLeaderBoardOfConference = getLeaderBoardOfConference;
 exports.getGamesByTeamAndSeason = getGamesByTeamAndSeason;
 exports.getPlayerStatistics=getPlayerStatistics;
-export.getGameDetails=getGameDetails;
+exports.getGameDetails=getGameDetails;
