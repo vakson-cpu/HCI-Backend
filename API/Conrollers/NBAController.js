@@ -142,13 +142,13 @@ const getPlayerStatistics = async(req,res,next)=>{
    const {gameId } = req.query;
   let result = await axios
     .get(`https://api-nba-v1.p.rapidapi.com/players/statistics`, {
-      params: { id:gameId },
+      params: { game:gameId },
       headers: {
         "X-RapidAPI-Key": "3be10b1358msh51fd936d1571daep1230ccjsn529137f75def",
         "X-RapidAPI-Host": "api-nba-v1.p.rapidapi.com",
       },
     })
-    .then((res) => res.data.response)
+    .then((res) => res.data)
     .catch((err) => next(new HttpError(err, 500, false)));
 
   return res.status(200).json(result); 
