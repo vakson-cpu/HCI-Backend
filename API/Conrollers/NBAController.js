@@ -150,6 +150,8 @@ const getPlayerStatistics = async(req,res,next)=>{
     })
     .then((res) => res.data.response)
     .catch((err) => next(new HttpError(err, 500, false)));
+    const names = [...new Set(result.map(obj => obj.team.name))];
+    console.log(names);
 
   return res.status(200).json(result); 
 }
