@@ -148,7 +148,7 @@ const getPlayerStatistics = async(req,res,next)=>{
         "X-RapidAPI-Host": "api-nba-v1.p.rapidapi.com",
       },
     })
-    .then((res) => res.data)
+    .then((res) => res.data.response)
     .catch((err) => next(new HttpError(err, 500, false)));
 
   return res.status(200).json(result); 
