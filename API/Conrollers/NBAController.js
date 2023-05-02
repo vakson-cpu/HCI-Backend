@@ -105,7 +105,7 @@ const getTeamById = async (req, res, next) => {
 
   const color = await ColorThief.getColor(result[0].logo); //Ovde kupi sa linka
   console.log(color);
-  return res.status(200).json({team:result,color:color});
+  return res.status(200).json({ team: result, color: color });
 };
 
 const getGamesByTeamAndSeason = async (req, res, next) => {
@@ -123,11 +123,11 @@ const getGamesByTeamAndSeason = async (req, res, next) => {
 
   return res.status(200).json(result);
 };
-const getGameDetails = async(req,res,next)=>{
-   const {gameId } = req.query;
+const getGameDetails = async (req, res, next) => {
+  const { gameId } = req.query;
   let result = await axios
     .get(`https://api-nba-v1.p.rapidapi.com/games/statistics`, {
-      params: { id:gameId },
+      params: { id: gameId },
       headers: {
         "X-RapidAPI-Key": "3be10b1358msh51fd936d1571daep1230ccjsn529137f75def",
         "X-RapidAPI-Host": "api-nba-v1.p.rapidapi.com",
@@ -136,13 +136,13 @@ const getGameDetails = async(req,res,next)=>{
     .then((res) => res.data.response)
     .catch((err) => next(new HttpError(err, 500, false)));
 
-  return res.status(200).json(result); 
-}
-const getPlayerStatistics = async(req,res,next)=>{
-   const {gameId } = req.query;
+  return res.status(200).json(result);
+};
+const getPlayerStatistics = async (req, res, next) => {
+  const { gameId } = req.query;
   let result = await axios
     .get(`https://api-nba-v1.p.rapidapi.com/players/statistics`, {
-      params: { game:gameId },
+      params: { game: gameId },
       headers: {
         "X-RapidAPI-Key": "3be10b1358msh51fd936d1571daep1230ccjsn529137f75def",
         "X-RapidAPI-Host": "api-nba-v1.p.rapidapi.com",
@@ -150,11 +150,13 @@ const getPlayerStatistics = async(req,res,next)=>{
     })
     .then((res) => res.data.response)
     .catch((err) => next(new HttpError(err, 500, false)));
-    const names = [...new Set(result.map(obj => obj.team.name))];
-    console.log(names);
 
-  return res.status(200).json(result); 
-}
+  // let points=result.sort((a, b) => b.points - a.points).slice(0,3);
+  // let assists=result.sort((a,b)=>b.assists-a.assists).slice(0,3);
+  // let rebounds=result.sort((a,b)=>b.totReb-a.totReb).slice(0,3);
+  let filteredList = result.filter(item=>item.min>0).sort((a, b) => (b.points+b.assists+b.toReb) - (a.points+a.assists+a.toReb));
+  return res.status(200).json({players:filteredList,number:filteredList.length});
+};
 exports.getGames = getGames;
 exports.getSeasons = getSeasons;
 exports.getLive = getLive;
@@ -162,5 +164,5 @@ exports.getStandingsByTeamId = getStandingsByTeamId;
 exports.getTeamById = getTeamById;
 exports.getLeaderBoardOfConference = getLeaderBoardOfConference;
 exports.getGamesByTeamAndSeason = getGamesByTeamAndSeason;
-exports.getPlayerStatistics=getPlayerStatistics;
-exports.getGameDetails=getGameDetails;
+exports.getPlayerStatistics = getPlayerStatistics;
+exports.getGameDetails = getGameDetails;
