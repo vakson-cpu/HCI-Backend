@@ -105,7 +105,7 @@ const getTeamById = async (req, res, next) => {
       .then((res) => res.data.response)
       .catch((err) => err);
   } catch (err) {
-    const error = new HttpError("Something went wrong", 500, false);
+    const error = new HttpError(err, 500, false);
     next(error);
   }
   // const colorThief = new ColorThief();
