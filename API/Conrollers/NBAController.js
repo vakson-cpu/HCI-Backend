@@ -91,7 +91,9 @@ const getStandingsByTeamId = async (req, res, next) => {
 };
 const getTeamById = async (req, res, next) => {
   const { id } = req.query;
+  
   let result;
+  console.log("Primljeni id je : ",id);
   try {
     result = await axios
       .get(`https://api-nba-v1.p.rapidapi.com/teams`, {
@@ -108,11 +110,7 @@ const getTeamById = async (req, res, next) => {
     const error = new HttpError(err, 500, false);
     next(error);
   }
-  // const colorThief = new ColorThief();
-
-  const color = await ColorThief.getColor(result[0].logo); //Ovde kupi sa linka
-  console.log(color);
-  return res.status(200).json({ team: result, color: color });
+  return res.status(200).json({ team: result, color: [34,34,34] });
 };
 
 const getGamesByTeamAndSeason = async (req, res, next) => {
