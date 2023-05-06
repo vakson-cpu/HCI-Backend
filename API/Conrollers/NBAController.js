@@ -163,7 +163,7 @@ const getPlayerStatistics = async (req, res, next) => {
     .filter((item) => item.min > 0)
     .sort(
       (a, b) =>
-        b.points + b.assists + b.toReb - (a.points + a.assists + a.toReb)
+        b.points - a.points
     );
   return res
     .status(200)
