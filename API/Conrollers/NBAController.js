@@ -3,11 +3,24 @@ const CustomResponse = require("../utils/CustomResponse");
 const HttpError = require("../utils/HttpError");
 const ColorThief = require("colorthief");
 // "color-thief-node": "^1.0.4"
+function formatDate() {
+  var d = new Date(),
+      month = '' + (d.getMonth() + 1),
+      day = '' + d.getDate(),
+      year = d.getFullYear();
+
+  if (month.length < 2) 
+      month = '0' + month;
+  if (day.length < 2) 
+      day = '0' + day;
+
+  return [year, month, day].join('-');
+}
 const getGames = async (req, res, next) => {
-  var current_date = new Date();
+  let dateFormat = formatDate()
   let result = await axios
     .get(`https://api-nba-v1.p.rapidapi.com/games`, {
-      params: { date: current_date},
+      params: { date: dateFormat},
       headers: {
         "X-RapidAPI-Key": "3be10b1358msh51fd936d1571daep1230ccjsn529137f75def",
         "X-RapidAPI-Host": "api-nba-v1.p.rapidapi.com",
