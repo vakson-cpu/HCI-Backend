@@ -4,9 +4,10 @@ const HttpError = require("../utils/HttpError");
 const ColorThief = require("colorthief");
 // "color-thief-node": "^1.0.4"
 const getGames = async (req, res, next) => {
+  var current_date = new Date();
   let result = await axios
     .get(`https://api-nba-v1.p.rapidapi.com/games`, {
-      params: { date: "2022-02-12" },
+      params: { date: current_date},
       headers: {
         "X-RapidAPI-Key": "3be10b1358msh51fd936d1571daep1230ccjsn529137f75def",
         "X-RapidAPI-Host": "api-nba-v1.p.rapidapi.com",
