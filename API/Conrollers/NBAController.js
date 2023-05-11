@@ -41,7 +41,7 @@ const getGames = async (req, res, next) => {
     .catch((err) => next(new HttpError(err, 500, false)));
     let filteredArray = result.response.filter(item=>item.date.start>= startDate)
 
-  return res.status(200).json(filteredArray.length);
+  return res.status(200).json(filteredArray);
 };
 const getSeasons = async (req, res, next) => {
   let result = await axios
