@@ -17,18 +17,31 @@ function formatDate() {
   return [year, month, day].join('-');
 }
 const getGames = async (req, res, next) => {
-  let dateFormat = formatDate()
+  // let dateFormat = formatDate()
+  const currentDate = new Date();
+
+  // One day before the current date
+  const oneDayBefore = new Date(currentDate);
+  oneDayBefore.setDate(currentDate.getDate() - 1);
+  
+  // Four days after the current date
+  const fourDaysAfter = new Date(currentDate);
+  fourDaysAfter.setDate(currentDate.getDate() + 4);  
+  let startDate = oneDayBefore.toISOString();
+  let endDate = fourDaysAfter.toISOString();
   let result = await axios
     .get(`https://api-nba-v1.p.rapidapi.com/games`, {
-      params: { date: dateFormat},
-      headers: {
+      params: {season: '2022'},
+            headers: {
         "X-RapidAPI-Key": "3be10b1358msh51fd936d1571daep1230ccjsn529137f75def",
         "X-RapidAPI-Host": "api-nba-v1.p.rapidapi.com",
       },
     })
     .then((res) => res.data)
     .catch((err) => next(new HttpError(err, 500, false)));
-  return res.status(200).json(result);
+    let filteredArray = result.response.filter(item=>item.date.start>= startDate)
+
+  return res.status(200).json(filteredArray.length);
 };
 const getSeasons = async (req, res, next) => {
   let result = await axios
