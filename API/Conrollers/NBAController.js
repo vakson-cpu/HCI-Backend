@@ -39,8 +39,10 @@ const getGames = async (req, res, next) => {
     })
     .then((res) => res.data)
     .catch((err) => next(new HttpError(err, 500, false)));
-    let filteredArray = result.response.filter(item=>item.date.start>= startDate)
-
+    let filteredArray = result.response.filter(item=>item.date.start>= startDate).sort((a, b) => new Date(a.date.start) - new Date(b.date.start));
+    let finishedGames = filteredArray.filter(item=>item.status.long==="Finished")
+    let unFinishedGames =filteredArray.filter(item=>item.status.long!=="Finished")
+    
   return res.status(200).json(filteredArray);
 };
 const getSeasons = async (req, res, next) => {
