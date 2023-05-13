@@ -11,4 +11,6 @@ router.get("/Teams/Name",NBAController.getTeamById);
 router.get("/Games/Season",NBAController.getGamesByTeamAndSeason);
 router.get("/Game/Stats",NBAController.getGameDetails);
 router.get("/Games/Player/Stats",NBAController.getPlayerStatistics);
+router.get("/Teams/Search",NBAController.searchForTeam);
+router.get("/Players/Search",NBAController.searchForPlayers);
 module.exports=router;

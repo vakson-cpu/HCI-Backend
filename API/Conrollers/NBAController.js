@@ -198,6 +198,46 @@ const getPlayerStatistics = async (req, res, next) => {
     .status(200)
     .json({ players: filteredList, number: filteredList.length });
 };
+
+
+
+const searchForTeam = async (req, res, next) => {
+  const { searchText } = req.query;
+  let result = await axios
+    .get(`https://api-nba-v1.p.rapidapi.com/teams`, {
+      params: { search:searchText },
+      headers: {
+        "X-RapidAPI-Key": "3be10b1358msh51fd936d1571daep1230ccjsn529137f75def",
+        "X-RapidAPI-Host": "api-nba-v1.p.rapidapi.com",
+      },
+    })
+    .then((res) => res.data.response)
+    .catch((err) => next(new HttpError(err, 500, false)));
+
+  return res.status(200).json(result);
+};
+const searchForPlayers = async (req, res, next) => {
+  const { searchText } = req.query;
+  let result = await axios
+    .get(`https://api-nba-v1.p.rapidapi.com/players`, {
+      params: { search:searchText },
+      headers: {
+        "X-RapidAPI-Key": "3be10b1358msh51fd936d1571daep1230ccjsn529137f75def",
+        "X-RapidAPI-Host": "api-nba-v1.p.rapidapi.com",
+      },
+    })
+    .then((res) => res.data.response)
+    .catch((err) => next(new HttpError(err, 500, false)));
+
+  return res.status(200).json(result);
+};
+
+
+
+
+
+// params: {search: 'atl'},
+
 exports.getGames = getGames;
 exports.getSeasons = getSeasons;
 exports.getLive = getLive;
@@ -207,3 +247,5 @@ exports.getLeaderBoardOfConference = getLeaderBoardOfConference;
 exports.getGamesByTeamAndSeason = getGamesByTeamAndSeason;
 exports.getPlayerStatistics = getPlayerStatistics;
 exports.getGameDetails = getGameDetails;
+exports.searchForPlayers=searchForPlayers;
+exports.searchForTeam=searchForTeam;
