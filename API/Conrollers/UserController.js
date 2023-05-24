@@ -7,6 +7,7 @@ const jwt = require("jsonwebtoken");
 const { validationResult } = require("express-validator");
 
 const RoleEnums = require("../../Data/Constants/RoleEnums");
+const nodemailer = require("nodemailer");
 
 const getUsers = async (req, res, next) => {
   try {
@@ -32,6 +33,15 @@ const getUserbyId = async (req, res, next) => {
   }
 };
 
+function generateFourDigitNumber() {
+  var min = 1000; // Minimum value (inclusive)
+  var max = 9999; // Maximum value (inclusive)
+
+  // Generate a random number within the specified range
+  var randomNumber = Math.floor(Math.random() * (max - min + 1)) + min;
+
+  return randomNumber;
+}
 const Register = async (req, res, next) => {
   const { name, email, age, password } = req.body;
   const errors = validationResult(req);
@@ -48,10 +58,10 @@ const Register = async (req, res, next) => {
   try {
     existingUser = await Users.findOne({ email: email });
   } catch (err) {
-    next(new HttpError("Error While Fetching from database", 501, false));
+    return next(new HttpError("Error While Fetching from database", 501, false));
   }
   if (existingUser) {
-    next(new HttpError("User Exists", 422, false));
+    return next(new HttpError("User Exists", 422, false));
   }
   let hashedPassword;
   try {
@@ -60,11 +70,35 @@ const Register = async (req, res, next) => {
     const error = new HttpError("Could not hash password", 500, false);
     return next(error);
   }
+  var transporter = nodemailer.createTransport({
+    service: "gmail",
+    auth: {
+      user: "vakson12@gmail.com",
+      pass: "malxzwrtegtgpsib",
+    },
+  });
+  let code = generateFourDigitNumber();
+  var mailOptions = {
+    from: "vakson12@gmail.com",
+    to: email,
+    subject: "Verify Account",
+    text: `Thank you for signin up on our app! Here is the code to verify your acc:<b> ${code}</b>`,
+  };
+
+  transporter.sendMail(mailOptions, function (error, info) {
+    if (error) {
+      const error = new HttpError("Error while sending mail", 500, false);
+      return next(error);
+    } else {
+      console.log("Email sent: " + info.response);
+    }
+  });
   const newUser = new Users({
     name,
     age,
     email,
     password: hashedPassword,
+    code: code,
   });
   try {
     let role = await Roles.findOne({ name: RoleEnums.USER });
@@ -114,7 +148,7 @@ const LogIn = async (req, res, next) => {
   const { email, password } = req.body;
   let existingUser;
   try {
-    existingUser = await Users.findOne({ email: email }).populate('role');
+    existingUser = await Users.findOne({ email: email }).populate("role");
   } catch (err) {
     const error = new HttpError("Could not find the user", 500, false);
     return next(error);
@@ -126,19 +160,19 @@ const LogIn = async (req, res, next) => {
       401,
       false
     );
-    next(error);
+    return next(error);
   }
   let isValidPassword = false;
   try {
     isValidPassword = await bycrypt.compare(password, existingUser.password);
   } catch (err) {
     const error = new HttpError("Hashing failed", 500, false);
-    next(error);
+    return next(error);
   }
 
   if (isValidPassword == false) {
     const error = new HttpError("Invalid Credentials", 401, false);
-    next(error);
+    return next(error);
   }
   let token;
   try {
@@ -153,7 +187,7 @@ const LogIn = async (req, res, next) => {
     );
   } catch (err) {
     const error = new HttpError("Greska u jwt", 500, false);
-    next(error);
+    return next(error);
   }
   let response = new CustomResponse(
     {
