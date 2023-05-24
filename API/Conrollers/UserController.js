@@ -195,6 +195,7 @@ const LogIn = async (req, res, next) => {
       email: existingUser.email,
       token: token,
       role: existingUser.role,
+      verified:existingUser.isVerified
     },
     "Successfully Logged In ",
     true
