@@ -212,7 +212,7 @@ const verifyUserAccount = async (req, res, next) => {
   console.log("\n userId : ",userId)
   let existingUser;
   try {
-    existingUser = await Users.findById(userId);
+    existingUser = await Users.find(userId);
     console.log("existingcode", existingUser.code)
   } catch (err) {
     const error = new HttpError("No user found!", 500, false);
