@@ -212,10 +212,11 @@ const verifyUserAccount = async (req, res, next) => {
   console.log("\n userId : ",userId)
   let existingUser;
   try {
-    existingUser = await Users.find(userId);
+    console.log("tu dodje...")
+    existingUser = await Users.find({_id:userId});
     console.log("existingcode", existingUser.code)
   } catch (err) {
-    const error = new HttpError("No user found!", 500, false);
+    const error = new HttpError("Database Error!", 500, false);
     return next(error);
   }
   if (code === existingUser.code || +code === +existingUser.code) {
