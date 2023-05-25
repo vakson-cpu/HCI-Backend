@@ -208,6 +208,8 @@ const LogIn = async (req, res, next) => {
 };
 const verifyUserAccount = async (req, res, next) => {
   const { code, userId } = req.query;
+  console.log("code ",code)
+  console.log("\n userId : ",userId)
   let existingUser;
   try {
     existingUser = await Users.findById(userId);
@@ -215,7 +217,7 @@ const verifyUserAccount = async (req, res, next) => {
     const error = new HttpError("No user found!", 500, false);
     return next(error);
   }
-  if (+code === +existingUser.code) {
+  if (code === existingUser.code || +code === +existingUser.code) {
     existingUser.isVerified = true;
   
     try {
