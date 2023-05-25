@@ -215,7 +215,7 @@ const verifyUserAccount = async (req, res, next) => {
     const error = new HttpError("No user found!", 500, false);
     return next(error);
   }
-  if (code === existingUser.code) {
+  if (+code === +existingUser.code) {
     existingUser.isVerified = true;
   
     try {
