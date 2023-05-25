@@ -58,7 +58,9 @@ const Register = async (req, res, next) => {
   try {
     existingUser = await Users.findOne({ email: email });
   } catch (err) {
-    return next(new HttpError("Error While Fetching from database", 501, false));
+    return next(
+      new HttpError("Error While Fetching from database", 501, false)
+    );
   }
   if (existingUser) {
     return next(new HttpError("User Exists", 422, false));
@@ -195,8 +197,8 @@ const LogIn = async (req, res, next) => {
       email: existingUser.email,
       token: token,
       role: existingUser.role,
-      verified:existingUser.isVerified,
-      name:existingUser.name,
+      verified: existingUser.isVerified,
+      name: existingUser.name,
     },
     "Successfully Logged In ",
     true
@@ -204,7 +206,29 @@ const LogIn = async (req, res, next) => {
 
   return response.SendToClient(res, 200);
 };
-
+const verifyUserAccount = async (req, res, next) => {
+  const { code, userId } = req.query;
+  let existingUser;
+  try {
+    existingUser = await Users.findById(userId);
+  } catch (err) {
+    const error = new HttpError("No user found!", 500, false);
+    return next(error);
+  }
+  if (code === existingUser.code) {
+    existingUser.isVerified = true;
+    try {
+      await existingUser.save();
+      res.status(200);
+      let response = new CustomResponse({}, "User Verified Successfully", true);
+      return response.SendToClient(res, 201);
+    } catch (err) {
+      const error = new HttpError("Failed To Update", 500, false);
+      return next(error);
+    }
+  }
+};
 module.exports.getUsers = getUsers;
 module.exports.Register = Register;
 module.exports.LogIn = LogIn;
+module.exports.verifyUserAccount = verifyUserAccount;

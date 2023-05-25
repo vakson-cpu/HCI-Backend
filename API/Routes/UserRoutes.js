@@ -14,5 +14,6 @@ router.post(
   UserController.Register
 );
 router.post("/Login", UserController.LogIn);
+router.put("/Verify", UserController.verifyUserAccount);
 
 module.exports = router;
