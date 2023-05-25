@@ -214,6 +214,7 @@ const verifyUserAccount = async (req, res, next) => {
   try {
     console.log("tu dodje...")
     const cleanedUserId = userId.slice(1,-1) // Remove double quotes from the user ID
+    console.log(cleanedUserId)
     existingUser = await Users.findById(cleanedUserId)
     console.log("existingcode", existingUser.code)
   } catch (err) {
