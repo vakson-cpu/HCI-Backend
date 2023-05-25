@@ -216,6 +216,7 @@ const verifyUserAccount = async (req, res, next) => {
     existingUser = await Users.find({_id:userId});
     console.log("existingcode", existingUser.code)
   } catch (err) {
+    console.log(err);
     const error = new HttpError("Database Error!", 500, false);
     return next(error);
   }
