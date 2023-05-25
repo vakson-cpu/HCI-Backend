@@ -217,6 +217,7 @@ const verifyUserAccount = async (req, res, next) => {
   }
   if (code === existingUser.code) {
     existingUser.isVerified = true;
+  
     try {
       await existingUser.save();
       res.status(200);
@@ -226,7 +227,8 @@ const verifyUserAccount = async (req, res, next) => {
       const error = new HttpError("Failed To Update", 500, false);
       return next(error);
     }
-  }
+  }  else 
+  return next(new HttpError("Code invalid",501,false));
 };
 module.exports.getUsers = getUsers;
 module.exports.Register = Register;
