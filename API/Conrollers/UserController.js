@@ -193,7 +193,7 @@ const LogIn = async (req, res, next) => {
   }
   let response = new CustomResponse(
     {
-      userId: existingUser.id,
+      userId: existingUser._id,
       email: existingUser.email,
       token: token,
       role: existingUser.role,
