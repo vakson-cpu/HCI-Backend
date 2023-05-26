@@ -9,6 +9,7 @@ const userShema = new Schema({
   password:{type:String,required:true},
   code:{type:String,required:true},
   isVerified:{type:Boolean,default:false},
-  role: { type: mongoose.Schema.Types.ObjectId, ref: 'Role' }
+  role: { type: mongoose.Schema.Types.ObjectId, ref: 'Role' },
+  favorites: [{ type: Number,default:[] }]
 });
 module.exports = mongoose.model("User", userShema);

@@ -4,6 +4,8 @@ const CustomResponse = require("../utils/CustomResponse");
 const HttpError = require("../utils/HttpError");
 const bycrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const axios = require("axios");
+
 const { validationResult } = require("express-validator");
 
 const RoleEnums = require("../../Data/Constants/RoleEnums");
@@ -208,15 +210,15 @@ const LogIn = async (req, res, next) => {
 };
 const verifyUserAccount = async (req, res, next) => {
   const { code, userId } = req.query;
-  console.log("code ",code)
-  console.log("\n userId : ",userId)
+  console.log("code ", code);
+  console.log("\n userId : ", userId);
   let existingUser;
   try {
-    console.log("tu dodje...")
-    const cleanedUserId = userId.slice(1,-1) // Remove double quotes from the user ID
-    console.log(cleanedUserId)
-    existingUser = await Users.findById(cleanedUserId)
-    console.log("existingcode", existingUser.code)
+    console.log("tu dodje...");
+    const cleanedUserId = userId.slice(1, -1); // Remove double quotes from the user ID
+    console.log(cleanedUserId);
+    existingUser = await Users.findById(cleanedUserId);
+    console.log("existingcode", existingUser.code);
   } catch (err) {
     console.log(err);
     const error = new HttpError("Database Error!", 500, false);
@@ -224,7 +226,7 @@ const verifyUserAccount = async (req, res, next) => {
   }
   if (code === existingUser.code || +code === +existingUser.code) {
     existingUser.isVerified = true;
-  
+
     try {
       await existingUser.save();
       res.status(200);
@@ -234,10 +236,61 @@ const verifyUserAccount = async (req, res, next) => {
       const error = new HttpError("Failed To Update", 500, false);
       return next(error);
     }
-  }  else 
-  return next(new HttpError("Code invalid",501,false));
+  } else return next(new HttpError("Code invalid", 501, false));
 };
+function getTeamById(teamId, leaderboard) {
+  const team = leaderboard.find((item) => item.team.id === teamId);
+  return team || null;
+}
+const getUsersFavorites = async (req, res, next) => {
+  let { userId } = req.query;
+  let easternResult = await axios
+    .get(`https://api-nba-v1.p.rapidapi.com/standings`, {
+      params: { league: "standard", season: "2022", conference: "east" },
+      headers: {
+        "X-RapidAPI-Key": "3be10b1358msh51fd936d1571daep1230ccjsn529137f75def",
+        "X-RapidAPI-Host": "api-nba-v1.p.rapidapi.com",
+      },
+    })
+    .then((res) => res.data.response)
+    .catch((err) => next(new HttpError(err, 500, false)));
+  let westernResult = await axios
+    .get(`https://api-nba-v1.p.rapidapi.com/standings`, {
+      params: { league: "standard", season: "2022", conference: "west" },
+      headers: {
+        "X-RapidAPI-Key": "3be10b1358msh51fd936d1571daep1230ccjsn529137f75def",
+        "X-RapidAPI-Host": "api-nba-v1.p.rapidapi.com",
+      },
+    })
+    .then((res) => res.data.response)
+    .catch((err) => next(new HttpError(err, 500, false)));
+
+  let easternTeams = easternResult.map((item) => item.team.id);
+  let westernTeams = westernResult.map((item) => item.team.id);
+  let user = Users.find({ userId });
+  const favoriteIds = user.favorites;
+  const favoriteTeams = [];
+  easternTeams.forEach((element) => {
+    if (favoriteIds.Include(element)) {
+      favoriteTeams.push(getTeamById(element));
+    }
+  });
+  westernTeams.forEach((element) => {
+    if (favoriteIds.Include(element)) {
+      favoriteTeams.push(getTeamById(element));
+    }
+  });
+
+  let Response = new CustomResponse(
+    { favorites: favoriteTeams },
+    "Succeeded",
+    true
+  );
+  return Response.SendToClient(res, 200);
+};
+
 module.exports.getUsers = getUsers;
 module.exports.Register = Register;
 module.exports.LogIn = LogIn;
 module.exports.verifyUserAccount = verifyUserAccount;
+module.exports.getUsersFavorites = getUsersFavorites;
