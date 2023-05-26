@@ -16,5 +16,5 @@ router.post(
 router.post("/Login", UserController.LogIn);
 router.put("/Verify", UserController.verifyUserAccount);
 router.get("/favorites", UserController.getUsersFavorites);
-
+router.post("/AddToFavorites",UserController.favoriteATeam);
 module.exports = router;

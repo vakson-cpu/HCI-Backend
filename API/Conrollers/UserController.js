@@ -289,8 +289,31 @@ const getUsersFavorites = async (req, res, next) => {
   return Response.SendToClient(res, 200);
 };
 
+const favoriteATeam=async(req,res,next)=>{
+  const {userId,teamId} = req.query;
+  let user;
+  try{
+  let user = Users.findById(userId);
+  }catch(err){
+    throw(new HttpError("Failed to fetch user",404,false));
+  }
+  user.favorites.push(teamId);
+  try{
+    await user.save();
+  }catch(err){
+    throw(new HttpError("Failed to save",501,false))
+  }
+  let Response = new CustomResponse(
+    { favorites: user.favorites },
+    "Succeeded",
+    true
+  );
+  return Response.SendToClient(res, 200);}
+
+
 module.exports.getUsers = getUsers;
 module.exports.Register = Register;
 module.exports.LogIn = LogIn;
 module.exports.verifyUserAccount = verifyUserAccount;
 module.exports.getUsersFavorites = getUsersFavorites;
+module.exports.favoriteATeam=favoriteATeam;
