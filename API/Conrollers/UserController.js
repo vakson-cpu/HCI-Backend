@@ -293,7 +293,8 @@ const favoriteATeam=async(req,res,next)=>{
   const {userId,teamId} = req.query;
   let user;
   try{
-  let user = Users.findById(userId);
+  userId=userId.slice(1,-1);
+  user = Users.findById(userId);
   }catch(err){
     throw(new HttpError("Failed to fetch user",404,false));
   }
