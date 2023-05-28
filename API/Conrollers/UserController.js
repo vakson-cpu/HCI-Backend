@@ -294,9 +294,9 @@ const favoriteATeam=async(req,res,next)=>{
   console.log(teamId)
   let user;
   try{
-    userId=userId.slice(1,-1);
+    const trimmedUserId=userId.slice(1,-1);
     console.log("user id : ",userId," \n")
-  user =await Users.findById(userId);
+  user =await Users.findById(trimmedUserId);
   console.log(user)
   }catch(err){
     throw(new HttpError("Failed to fetch user",404,false));
