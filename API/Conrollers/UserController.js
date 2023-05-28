@@ -291,6 +291,8 @@ const getUsersFavorites = async (req, res, next) => {
 
 const favoriteATeam=async(req,res,next)=>{
   const {userId,teamId} = req.query;
+  console.log(userId," \n ")
+  console.log(teamId)
   let user;
   try{
   userId=userId.slice(1,-1);
