@@ -291,11 +291,11 @@ const getUsersFavorites = async (req, res, next) => {
 
 const favoriteATeam=async(req,res,next)=>{
   const {userId,teamId} = req.query;
-  console.log(userId," \n")
   console.log(teamId)
   let user;
   try{
-  userId=userId.slice(1,-1);
+    userId=userId.slice(1,-1);
+    console.log(userId," \n")
   user = Users.findById(userId);
   }catch(err){
     throw(new HttpError("Failed to fetch user",404,false));
