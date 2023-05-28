@@ -294,8 +294,8 @@ const favoriteATeam=async(req,res,next)=>{
   console.log(teamId)
   let user;
   try{
-    userId=userId.slice(1,-1);
-    console.log(userId," \n")
+    // userId=userId.slice(1,-1);
+    console.log("user id : ",userId," \n")
   user =await Users.findById(userId);
   console.log(user)
   }catch(err){
