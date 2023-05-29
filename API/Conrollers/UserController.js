@@ -239,7 +239,7 @@ const verifyUserAccount = async (req, res, next) => {
   } else return next(new HttpError("Code invalid", 501, false));
 };
 function getTeamById(teamId, leaderboard) {
-  const team = leaderboard.find((item) => item.team.id === teamId);
+  const team = leaderboard.filter((item) => item.team.id === teamId);
   return team || null;
 }
 const getUsersFavorites = async (req, res, next) => {
@@ -267,17 +267,23 @@ const getUsersFavorites = async (req, res, next) => {
 
   let easternTeams = easternResult.map((item) => item.team.id);
   let westernTeams = westernResult.map((item) => item.team.id);
-  let user = Users.find({ userId });
+  const trimmedUserId = userId.slice(1,-1)
+  let user
+  try{
+  user = await Users.findById(trimmedUserId);
+  console.log("user je : ",user);}catch(err){
+    return  next(new HttpError(err,404,false));
+  }
   const favoriteIds = user.favorites;
   const favoriteTeams = [];
   easternTeams.forEach((element) => {
-    if (favoriteIds.Include(element)) {
-      favoriteTeams.push(getTeamById(element));
+    if (favoriteIds.includes(element)) {
+      favoriteTeams.push(getTeamById(element,easternResult));
     }
   });
   westernTeams.forEach((element) => {
-    if (favoriteIds.Include(element)) {
-      favoriteTeams.push(getTeamById(element));
+    if (favoriteIds.includes(element)) {
+      favoriteTeams.push(getTeamById(element,westernResult));
     }
   });
 
@@ -314,10 +320,30 @@ const favoriteATeam=async(req,res,next)=>{
   );
   return Response.SendToClient(res, 200);}
 
-
+const unFavoriteATeam=async(req,res,next)=>{
+  let {userId,teamId} = req.query;
+  let user
+  try{
+    const trimmedUserid = userId.slice(1,-1);
+    user = await Users.findById(trimmedUserid);
+    let oldFavorites = user.favorites;
+    let newFavorites = oldFavorites.filter(item=>item!== +teamId);
+    user.favorites=newFavorites;
+    await user.save()
+  }catch(err){
+    return next(new HttpError(err,500,false));
+  }
+  let Response = new CustomResponse(
+    { favorites: user.favorites },
+    "Succeeded",
+    true
+  );
+  return Response.SendToClient(res, 200);
+}
 module.exports.getUsers = getUsers;
 module.exports.Register = Register;
 module.exports.LogIn = LogIn;
 module.exports.verifyUserAccount = verifyUserAccount;
 module.exports.getUsersFavorites = getUsersFavorites;
 module.exports.favoriteATeam=favoriteATeam;
+module.exports.unFavoriteATeam=unFavoriteATeam;
