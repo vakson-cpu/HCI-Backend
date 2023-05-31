@@ -240,7 +240,7 @@ const verifyUserAccount = async (req, res, next) => {
 };
 function getTeamById(teamId, leaderboard) {
   const team = leaderboard.filter((item) => item.team.id === teamId);
-  return team || null;
+  return team[0] || null;
 }
 const getUsersFavorites = async (req, res, next) => {
   let { userId } = req.query;
