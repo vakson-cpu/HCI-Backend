@@ -264,7 +264,7 @@ const getUsersFavorites = async (req, res, next) => {
     })
     .then((res) => res.data.response)
     .catch((err) => next(new HttpError(err, 500, false)));
-
+  console.log(easternResult)
   let easternTeams = easternResult.map((item) => item.team.id);
   let westernTeams = westernResult.map((item) => item.team.id);
   const trimmedUserId = userId.slice(1,-1)
