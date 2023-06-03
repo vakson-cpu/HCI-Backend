@@ -245,7 +245,7 @@ function getTeamById(teamId, leaderboard) {
 const getUsersFavorites = async (req, res, next) => {
   let { userId } = req.query;
   let easternResult = await axios
-    .get(`https://api-nba-v1.p.rapidapi.com/standings?conference=east&season=2022`, {
+    .get(`https://api-nba-v1.p.rapidapi.com/standings?conference=east&season=2022&league=standard`, {
       
       headers: {
         "X-RapidAPI-Key": "3be10b1358msh51fd936d1571daep1230ccjsn529137f75def",
@@ -255,7 +255,7 @@ const getUsersFavorites = async (req, res, next) => {
     .then((res) => res.data.response)
     .catch((err) => next(new HttpError(err, 500, false)));
   let westernResult = await axios
-    .get(`https://api-nba-v1.p.rapidapi.com/standings?conference=west&season=2022`, {
+    .get(`https://api-nba-v1.p.rapidapi.com/standings?conference=west&season=2022&league=standard`, {
       headers: {
         "X-RapidAPI-Key": "3be10b1358msh51fd936d1571daep1230ccjsn529137f75def",
         "X-RapidAPI-Host": "api-nba-v1.p.rapidapi.com",
