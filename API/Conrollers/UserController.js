@@ -86,9 +86,9 @@ const Register = async (req, res, next) => {
     from: "vakson12@gmail.com",
     to: email,
     subject: "Verify Account",
-    text: `Thank you for signin up on our app! Here is the code to verify your acc:<b> ${code}</b>`,
+    text: `Thank you for signin up on our app! Here is the code to verify your acc: ${code}`,
   };
-
+try{
   transporter.sendMail(mailOptions, function (error, info) {
     if (error) {
        next(new HttpError(err,500,false));
@@ -96,6 +96,10 @@ const Register = async (req, res, next) => {
       console.log("Email sent: " + info.response);
     }
   });
+}catch(err){
+  console.log(err);
+  
+}
   const newUser = new Users({
     name,
     age,
