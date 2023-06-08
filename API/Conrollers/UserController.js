@@ -91,8 +91,7 @@ const Register = async (req, res, next) => {
 
   transporter.sendMail(mailOptions, function (error, info) {
     if (error) {
-      const error = new HttpError("Error while sending mail", 500, false);
-      return next(error);
+      return next(new HttpError(err,500,false));
     } else {
       console.log("Email sent: " + info.response);
     }
