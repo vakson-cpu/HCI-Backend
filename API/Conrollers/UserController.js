@@ -54,25 +54,25 @@ const Register = async (req, res, next) => {
       422,
       false
     );
-    return next(error);
+     next(error);
   }
   let existingUser;
   try {
     existingUser = await Users.findOne({ email: email });
   } catch (err) {
-    return next(
+     next(
       new HttpError("Error While Fetching from database", 501, false)
     );
   }
   if (existingUser) {
-    return next(new HttpError("User Exists", 422, false));
+     next(new HttpError("User Exists", 422, false));
   }
   let hashedPassword;
   try {
     hashedPassword = await bycrypt.hash(password, 12);
   } catch (err) {
     const error = new HttpError("Could not hash password", 500, false);
-    return next(error);
+     next(error);
   }
   var transporter = nodemailer.createTransport({
     service: "gmail",
@@ -91,7 +91,7 @@ const Register = async (req, res, next) => {
 
   transporter.sendMail(mailOptions, function (error, info) {
     if (error) {
-      return next(new HttpError(err,500,false));
+       next(new HttpError(err,500,false));
     } else {
       console.log("Email sent: " + info.response);
     }
@@ -108,7 +108,7 @@ const Register = async (req, res, next) => {
     newUser.role = role;
   } catch (err) {
     const error = new HttpError("Error while Fetching role", 500, false);
-    return next(error);
+     next(error);
   }
   try {
     await newUser.save();
@@ -118,7 +118,7 @@ const Register = async (req, res, next) => {
       500,
       false
     );
-    return next(error);
+     next(error);
   }
 
   let token;
@@ -130,7 +130,7 @@ const Register = async (req, res, next) => {
     );
   } catch (err) {
     const error = new HttpError("Error while creating token", 500, false);
-    return next(error);
+     next(error);
   }
 
   res.status(201);
@@ -146,7 +146,7 @@ const LogIn = async (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     var error = new HttpError("Validation Failed ", 422, false);
-    return next(error);
+     next(error);
   }
   const { email, password } = req.body;
   let existingUser;
@@ -154,7 +154,7 @@ const LogIn = async (req, res, next) => {
     existingUser = await Users.findOne({ email: email }).populate("role");
   } catch (err) {
     const error = new HttpError("Could not find the user", 500, false);
-    return next(error);
+     next(error);
   }
 
   if (!existingUser) {
@@ -163,19 +163,19 @@ const LogIn = async (req, res, next) => {
       401,
       false
     );
-    return next(error);
+     next(error);
   }
   let isValidPassword = false;
   try {
     isValidPassword = await bycrypt.compare(password, existingUser.password);
   } catch (err) {
     const error = new HttpError("Hashing failed", 500, false);
-    return next(error);
+     next(error);
   }
 
   if (isValidPassword == false) {
     const error = new HttpError("Invalid Credentials", 401, false);
-    return next(error);
+     next(error);
   }
   let token;
   try {
@@ -190,7 +190,7 @@ const LogIn = async (req, res, next) => {
     );
   } catch (err) {
     const error = new HttpError("Greska u jwt", 500, false);
-    return next(error);
+     next(error);
   }
   let response = new CustomResponse(
     {
@@ -221,7 +221,7 @@ const verifyUserAccount = async (req, res, next) => {
   } catch (err) {
     console.log(err);
     const error = new HttpError("Database Error!", 500, false);
-    return next(error);
+     next(error);
   }
   if (code === existingUser.code || +code === +existingUser.code) {
     existingUser.isVerified = true;
@@ -233,9 +233,9 @@ const verifyUserAccount = async (req, res, next) => {
       return response.SendToClient(res, 201);
     } catch (err) {
       const error = new HttpError("Failed To Update", 500, false);
-      return next(error);
+       next(error);
     }
-  } else return next(new HttpError("Code invalid", 501, false));
+  } else  next(new HttpError("Code invalid", 501, false));
 };
 function getTeamById(teamId, leaderboard) {
   const team = leaderboard.filter((item) => item.id === teamId);
@@ -340,7 +340,7 @@ const unFavoriteATeam=async(req,res,next)=>{
     user.favorites=newFavorites;
     await user.save()
   }catch(err){
-    return next(new HttpError(err,500,false));
+     next(new HttpError(err,500,false));
   }
   let Response = new CustomResponse(
     { favorites: user.favorites },
