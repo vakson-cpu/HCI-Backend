@@ -239,34 +239,45 @@ const verifyUserAccount = async (req, res, next) => {
   } else return next(new HttpError("Code invalid", 501, false));
 };
 function getTeamById(teamId, leaderboard) {
-  const team = leaderboard.filter((item) => item.team.id === teamId);
+  const team = leaderboard.filter((item) => item.id === teamId);
   return team[0] || null;
 }
 const getUsersFavorites = async (req, res, next) => {
   let { userId } = req.query;
-  let easternResult = await axios
-    .get(`https://api-nba-v1.p.rapidapi.com/standings?conference=east&season=2022&league=standard`, {
+  // let easternResult = await axios
+  //   .get(`https://api-nba-v1.p.rapidapi.com/standings?conference=east&season=2022&league=standard`, {
       
-      headers: {
-        "X-RapidAPI-Key": "3be10b1358msh51fd936d1571daep1230ccjsn529137f75def",
-        "X-RapidAPI-Host": "api-nba-v1.p.rapidapi.com",
-      },
-    })
-    .then((res) => res.data.response)
-    .catch((err) => next(new HttpError(err, 500, false)));
-  let westernResult = await axios
-    .get(`https://api-nba-v1.p.rapidapi.com/standings?conference=west&season=2022&league=standard`, {
-      headers: {
-        "X-RapidAPI-Key": "3be10b1358msh51fd936d1571daep1230ccjsn529137f75def",
-        "X-RapidAPI-Host": "api-nba-v1.p.rapidapi.com",
-      },
-    })
-    .then((res) => res.data.response)
-    .catch((err) => next(new HttpError(err, 500, false)));
-  console.log(easternResult)
-  let easternTeams = easternResult.map((item) => item.team.id);
-  let westernTeams = westernResult.map((item) => item.team.id);
+  //     headers: {
+  //       "X-RapidAPI-Key": "3be10b1358msh51fd936d1571daep1230ccjsn529137f75def",
+  //       "X-RapidAPI-Host": "api-nba-v1.p.rapidapi.com",
+  //     },
+  //   })
+  //   .then((res) => res.data.response)
+  //   .catch((err) => next(new HttpError(err, 500, false)));
+  // let westernResult = await axios
+  //   .get(`https://api-nba-v1.p.rapidapi.com/standings?conference=west&season=2022&league=standard`, {
+  //     headers: {
+  //       "X-RapidAPI-Key": "3be10b1358msh51fd936d1571daep1230ccjsn529137f75def",
+  //       "X-RapidAPI-Host": "api-nba-v1.p.rapidapi.com",
+  //     },
+  //   })
+  //   .then((res) => res.data.response)
+  //   .catch((err) => next(new HttpError(err, 500, false)));
+  // console.log(easternResult)
+  // let easternTeams = easternResult.map((item) => item.team.id);
+  // let westernTeams = westernResult.map((item) => item.team.id);
   const trimmedUserId = userId.slice(1,-1)
+  let allTeams= await axios
+    .get(`https://api-nba-v1.p.rapidapi.com/teams`, {
+      headers: {
+        "X-RapidAPI-Key": "3be10b1358msh51fd936d1571daep1230ccjsn529137f75def",
+        "X-RapidAPI-Host": "api-nba-v1.p.rapidapi.com",
+      },
+    })
+    .then((res) => res.data.response)
+    .catch((err) => next(new HttpError(err, 500, false)));
+      let allTeamsIds = allTeams.map((item) => item.id);
+
   let user
   try{
   user = await Users.findById(trimmedUserId);
@@ -275,16 +286,16 @@ const getUsersFavorites = async (req, res, next) => {
   }
   const favoriteIds = user.favorites;
   const favoriteTeams = [];
-  easternTeams.forEach((element) => {
+  allTeamsIds.forEach((element) => {
     if (favoriteIds.includes(element)) {
-      favoriteTeams.push(getTeamById(element,easternResult));
+      favoriteTeams.push(getTeamById(element,allTeams));
     }
   });
-  westernTeams.forEach((element) => {
-    if (favoriteIds.includes(element)) {
-      favoriteTeams.push(getTeamById(element,westernResult));
-    }
-  });
+  // westernTeams.forEach((element) => {
+  //   if (favoriteIds.includes(element)) {
+  //     favoriteTeams.push(getTeamById(element,westernResult));
+  //   }
+  // });
 
   let Response = new CustomResponse(
     { favorites: favoriteTeams },
