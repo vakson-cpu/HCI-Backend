@@ -19,6 +19,7 @@ const getUsers = async (req, res, next) => {
   } catch (err) {
     console.log(err);
     next(new HttpError("Error While Fetching from database", 404, false));
+    return
   }
 };
 
@@ -32,6 +33,7 @@ const getUserbyId = async (req, res, next) => {
     return response.SendToClient(res, 200);
   } catch (err) {
     next(new HttpError("Error While Fetching from database", 501, false));
+    return
   }
 };
 
@@ -55,6 +57,7 @@ const Register = async (req, res, next) => {
       false
     );
      next(error);
+     return
   }
   let existingUser;
   try {
@@ -63,9 +66,11 @@ const Register = async (req, res, next) => {
      next(
       new HttpError("Error While Fetching from database", 501, false)
     );
+    return
   }
   if (existingUser) {
      next(new HttpError("User Exists", 422, false));
+     return;
   }
   let hashedPassword;
   try {
@@ -73,9 +78,13 @@ const Register = async (req, res, next) => {
   } catch (err) {
     const error = new HttpError("Could not hash password", 500, false);
      next(error);
+     return
   }
   var transporter = nodemailer.createTransport({
-    service: "gmail",
+    service: 'gmail',
+    type: "SMTP",
+    host: "smtp.gmail.com",
+    secure:true,
     auth: {
       user: "vakson12@gmail.com",
       pass: "malxzwrtegtgpsib",
@@ -92,13 +101,14 @@ try{
   transporter.sendMail(mailOptions, function (error, info) {
     if (error) {
        next(new HttpError(err,500,false));
+       return
     } else {
       console.log("Email sent: " + info.response);
     }
   });
 }catch(err){
   console.log(err);
-  
+
 }
   const newUser = new Users({
     name,
@@ -113,6 +123,7 @@ try{
   } catch (err) {
     const error = new HttpError("Error while Fetching role", 500, false);
      next(error);
+     return
   }
   try {
     await newUser.save();
@@ -123,6 +134,7 @@ try{
       false
     );
      next(error);
+     return
   }
 
   let token;
@@ -135,6 +147,7 @@ try{
   } catch (err) {
     const error = new HttpError("Error while creating token", 500, false);
      next(error);
+     return
   }
 
   res.status(201);
@@ -151,6 +164,7 @@ const LogIn = async (req, res, next) => {
   if (!errors.isEmpty()) {
     var error = new HttpError("Validation Failed ", 422, false);
      next(error);
+     return
   }
   const { email, password } = req.body;
   let existingUser;
@@ -159,6 +173,7 @@ const LogIn = async (req, res, next) => {
   } catch (err) {
     const error = new HttpError("Could not find the user", 500, false);
      next(error);
+     return
   }
 
   if (!existingUser) {
@@ -168,6 +183,7 @@ const LogIn = async (req, res, next) => {
       false
     );
      next(error);
+     return
   }
   let isValidPassword = false;
   try {
@@ -175,11 +191,13 @@ const LogIn = async (req, res, next) => {
   } catch (err) {
     const error = new HttpError("Hashing failed", 500, false);
      next(error);
+     return
   }
 
   if (isValidPassword == false) {
     const error = new HttpError("Invalid Credentials", 401, false);
      next(error);
+     return
   }
   let token;
   try {
@@ -195,6 +213,7 @@ const LogIn = async (req, res, next) => {
   } catch (err) {
     const error = new HttpError("Greska u jwt", 500, false);
      next(error);
+     return
   }
   let response = new CustomResponse(
     {
@@ -226,6 +245,7 @@ const verifyUserAccount = async (req, res, next) => {
     console.log(err);
     const error = new HttpError("Database Error!", 500, false);
      next(error);
+     return
   }
   if (code === existingUser.code || +code === +existingUser.code) {
     existingUser.isVerified = true;
@@ -238,8 +258,13 @@ const verifyUserAccount = async (req, res, next) => {
     } catch (err) {
       const error = new HttpError("Failed To Update", 500, false);
        next(error);
+       return
+
     }
-  } else  next(new HttpError("Code invalid", 501, false));
+  } else { next(new HttpError("Code invalid", 501, false));
+  return
+
+}
 };
 function getTeamById(teamId, leaderboard) {
   const team = leaderboard.filter((item) => item.id === teamId);
